@@ -2,7 +2,6 @@ package cn.kaimier.reggie.controller;
 
 import cn.kaimier.reggie.common.R;
 import cn.kaimier.reggie.dto.DishDto;
-import cn.kaimier.reggie.entity.Dish;
 import cn.kaimier.reggie.service.DishService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -38,30 +37,30 @@ public class DishController {
         }
     }
 
-    @DeleteMapping
-    public R<String> deleteDish(@RequestParam List<Long> ids) {
-        boolean removed = dishService.deleteByIdWithFlavor(ids);
-        if (removed) {
-            return R.success("菜品信息删除成功");
-        } else {
-            return R.error("菜品信息删除失败");
-        }
-    }
-
     @GetMapping("/{id}")
-    public R<DishDto> getDishById(@PathVariable Long id) {
-        DishDto dishDto = dishService.getDishByIdWithFlavor(id);
+    public R<DishDto> getDishWithFlavorById(@PathVariable Long id) {
+        DishDto dishDto = dishService.getDishWithFlavorById(id);
         return R.success(dishDto);
     }
 
     @PutMapping
-    public R<String> updateDish(@RequestBody DishDto dishDto) {
-        log.info("修改菜品：{}", dishDto);
+    public R<String> updateDishWithFlavor(@RequestBody DishDto dishDto) {
         boolean updated = dishService.updateDishWithFlavor(dishDto);
         if (updated) {
             return R.success("修改菜品成功");
         } else {
             return R.error("修改菜品失败");
+        }
+    }
+
+
+    @DeleteMapping
+    public R<String> deleteDishWishFlavorById(@RequestParam List<Long> ids) {
+        boolean deleted = dishService.deleteDishWithFlavorById(ids);
+        if (deleted) {
+            return R.success("删除菜品成功");
+        } else {
+            return R.error("删除菜品失败");
         }
     }
 }

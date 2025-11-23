@@ -15,14 +15,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
@@ -85,7 +82,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             // 将 dish 的属性拷贝到 dishDto 中
             BeanUtils.copyProperties(dish, dishDto);
             // 根据 categoryId 查询分类名称
-            dishDto.setCategoryName(categoryMap.get(dish.getCategoryId()));;
+            dishDto.setCategoryName(categoryMap.get(dish.getCategoryId()));
             return dishDto;
         }).toList();
 
@@ -95,63 +92,57 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
-    @Transactional
-    public boolean deleteByIdWithFlavor(List<Long> ids) {
-        LambdaQueryWrapper<Dish> dishQueryWrapper = new LambdaQueryWrapper<>();
-        dishQueryWrapper.in(Dish::getId, ids);
-        dishQueryWrapper.eq(Dish::getStatus, 1);
-        if(count( dishQueryWrapper) > 0){
-            //如果不能删除，抛出一个业务异常
-            throw new RuntimeException("菜品正在售卖中，不能删除");
-        }
-        removeByIds(ids);
-        //删除菜品对应的口味数据
-        LambdaQueryWrapper<DishFlavor> flavorQueryWrapper = new LambdaQueryWrapper<>();
-        flavorQueryWrapper.in(DishFlavor::getDishId, ids);
-        dishFlavorService.remove(flavorQueryWrapper);
+    public DishDto getDishWithFlavorById(Long id) {
+        DishDto dishDto = new DishDto();
+        // Dish 基本信息取出来复制到 DishDto
+        Dish dish = getById(id);
+        BeanUtils.copyProperties(dish, dishDto);
+
+        // 菜品口味信息取出来放到 DishDto
+        LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorLambdaQueryWrapper.eq(DishFlavor::getDishId,id);
+        List<DishFlavor> flavors = dishFlavorService.list(dishFlavorLambdaQueryWrapper);
+        dishDto.setFlavors(flavors);
+
+        return dishDto;
+    }
+
+    @Override
+    public boolean updateDishWithFlavor(DishDto dishDto) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDto,dish,"createTime", "createUser", "updateTime", "updateUser");
+        dish.setUpdateTime(LocalDateTime.now());
+        dish.setUpdateUser(1L); // 假设修改人ID为1
+        updateById(dish);
+
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DishFlavor::getDishId, dish.getId());
+        dishFlavorService.remove(queryWrapper);
+
+        List<DishFlavor> flavors = dishDto.getFlavors();
+        flavors.forEach(flavor -> {
+            flavor.setDishId(dish.getId());
+            flavor.setCreateTime(LocalDateTime.now());
+            flavor.setUpdateTime(LocalDateTime.now());
+            flavor.setCreateUser(1L); // 假设创建人ID为1
+            flavor.setUpdateUser(1L); // 假设修改人ID为1
+        });
+
+        dishFlavorService.saveBatch(flavors);
+
 
         return true;
     }
 
     @Override
-    public DishDto getDishByIdWithFlavor(Long id) {
-        // 查询菜品基本信息
-        Dish dish = getById(id);
+    public boolean deleteDishWithFlavorById(List<Long> ids) {
+        LambdaQueryWrapper<Dish> dishQueryWrapper = new LambdaQueryWrapper<>();
+        dishQueryWrapper.in(Dish::getId, ids);
+        remove(dishQueryWrapper);
 
-        DishDto dishDto = new DishDto();
-        BeanUtils.copyProperties(dish, dishDto);
-
-        LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        dishFlavorLambdaQueryWrapper.eq(DishFlavor::getDishId, id);
-        // 查询当前菜品对应的口味信息
-        List<DishFlavor> flavors = dishFlavorService.list(dishFlavorLambdaQueryWrapper);
-        dishDto.setFlavors(flavors);
-        return dishDto;
-    }
-
-    @Override
-    @Transactional
-    public boolean updateDishWithFlavor(DishDto dishDto) {
-        // 更新dish表基本信息
-        updateById(dishDto);
-
-        // 清理当前菜品对应口味数据---dish_flavor表的delete操作
-        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(DishFlavor::getDishId, dishDto.getId());
-
-        dishFlavorService.remove(queryWrapper);
-
-        // 添加当前提交过来的口味数据---dish_flavor表的insert操作
-        List<DishFlavor> flavors = dishDto.getFlavors();
-        flavors.forEach(f -> {
-            f.setDishId(dishDto.getId());
-            f.setCreateTime(LocalDateTime.now());
-            f.setUpdateTime(LocalDateTime.now());
-            f.setCreateUser(1L); // 假设创建人ID为1
-            f.setUpdateUser(1L); // 假设修改人ID为1
-        });
-
-        dishFlavorService.saveBatch(flavors);
+        LambdaQueryWrapper<DishFlavor> dishFlavorQueryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorQueryWrapper.in(DishFlavor::getDishId, ids);
+        dishFlavorService.remove(dishFlavorQueryWrapper);
 
         return true;
     }

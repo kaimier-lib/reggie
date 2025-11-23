@@ -12,9 +12,10 @@ public interface DishService extends IService<Dish> {
 
     Page<DishDto> pageDish(int page, int pageSize, String name);
 
-    boolean deleteByIdWithFlavor(List<Long> ids);
 
-    DishDto getDishByIdWithFlavor(Long id);
+    DishDto getDishWithFlavorById(Long id);
 
     boolean updateDishWithFlavor(DishDto dishDto);
+
+    boolean deleteDishWithFlavorById(List<Long> ids);
 }
