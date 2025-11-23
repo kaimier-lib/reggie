@@ -5,8 +5,16 @@ import cn.kaimier.reggie.entity.Dish;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 public interface DishService extends IService<Dish> {
     boolean saveWithFlavor(DishDto dishDto);
 
-    Page<Dish> pageDish(int page, int pageSize, String name);
+    Page<DishDto> pageDish(int page, int pageSize, String name);
+
+    boolean deleteByIdWithFlavor(List<Long> ids);
+
+    DishDto getDishByIdWithFlavor(Long id);
+
+    boolean updateDishWithFlavor(DishDto dishDto);
 }

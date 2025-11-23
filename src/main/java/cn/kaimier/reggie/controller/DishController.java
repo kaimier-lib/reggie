@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/dish")
@@ -18,7 +20,7 @@ public class DishController {
     private DishService dishService;
 
     @GetMapping("/page")
-    public R<Page<Dish>> getDishPage(int page, int pageSize,String name) {
+    public R<Page<DishDto>> getDishPage(int page, int pageSize,String name) {
 
         return R.success(dishService.pageDish(page, pageSize, name));
 
@@ -36,4 +38,30 @@ public class DishController {
         }
     }
 
+    @DeleteMapping
+    public R<String> deleteDish(@RequestParam List<Long> ids) {
+        boolean removed = dishService.deleteByIdWithFlavor(ids);
+        if (removed) {
+            return R.success("菜品信息删除成功");
+        } else {
+            return R.error("菜品信息删除失败");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public R<DishDto> getDishById(@PathVariable Long id) {
+        DishDto dishDto = dishService.getDishByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
+
+    @PutMapping
+    public R<String> updateDish(@RequestBody DishDto dishDto) {
+        log.info("修改菜品：{}", dishDto);
+        boolean updated = dishService.updateDishWithFlavor(dishDto);
+        if (updated) {
+            return R.success("修改菜品成功");
+        } else {
+            return R.error("修改菜品失败");
+        }
+    }
 }
