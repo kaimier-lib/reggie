@@ -2,7 +2,6 @@ package cn.kaimier.reggie.controller;
 
 import cn.kaimier.reggie.common.R;
 import cn.kaimier.reggie.dto.DishDto;
-import cn.kaimier.reggie.entity.Dish;
 import cn.kaimier.reggie.service.DishService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;

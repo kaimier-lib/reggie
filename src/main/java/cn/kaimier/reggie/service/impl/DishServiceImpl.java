@@ -15,14 +15,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
@@ -85,7 +82,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             // 将 dish 的属性拷贝到 dishDto 中
             BeanUtils.copyProperties(dish, dishDto);
             // 根据 categoryId 查询分类名称
-            dishDto.setCategoryName(categoryMap.get(dish.getCategoryId()));;
+            dishDto.setCategoryName(categoryMap.get(dish.getCategoryId()));
             return dishDto;
         }).toList();
 
