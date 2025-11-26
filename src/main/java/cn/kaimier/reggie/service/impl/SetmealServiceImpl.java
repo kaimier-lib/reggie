@@ -16,11 +16,9 @@ import java.util.List;
 
 @Service
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
-    private final CategoryMapper categoryMapper;
     private final CategoryService categoryService;
 
     public SetmealServiceImpl(CategoryMapper categoryMapper, CategoryService categoryService) {
-        this.categoryMapper = categoryMapper;
         this.categoryService = categoryService;
     }
 
