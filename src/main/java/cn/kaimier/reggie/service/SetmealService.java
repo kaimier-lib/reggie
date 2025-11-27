@@ -7,4 +7,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface SetmealService extends IService<Setmeal> {
     Page<SetmealDto> getSetmealPage(int page, int pageSize, String name);
+
+    boolean saveSetmealWithDish(SetmealDto setmealDto);
 }

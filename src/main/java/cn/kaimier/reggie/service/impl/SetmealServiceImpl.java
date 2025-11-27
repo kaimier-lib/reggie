@@ -2,25 +2,26 @@ package cn.kaimier.reggie.service.impl;
 
 import cn.kaimier.reggie.dto.SetmealDto;
 import cn.kaimier.reggie.entity.Setmeal;
-import cn.kaimier.reggie.mapper.CategoryMapper;
+import cn.kaimier.reggie.entity.SetmealDish;
 import cn.kaimier.reggie.mapper.SetmealMapper;
 import cn.kaimier.reggie.service.CategoryService;
+import cn.kaimier.reggie.service.SetmealDishService;
 import cn.kaimier.reggie.service.SetmealService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
     private final CategoryService categoryService;
-
-    public SetmealServiceImpl(CategoryMapper categoryMapper, CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    private final SetmealDishService setMealDishService;
 
     @Override
     public Page<SetmealDto> getSetmealPage(int page, int pageSize, String name) {
@@ -46,5 +47,20 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
 
         return pageDto;
+    }
+
+    @Override
+    @Transactional
+    public boolean saveSetmealWithDish(SetmealDto setmealDto) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDto, setmeal);
+        save(setmeal);
+
+        Long setmealId = setmeal.getId();
+        List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
+        setmealDishes.forEach(item -> item.setSetmealId(setmealId));
+        setMealDishService.saveBatch(setmealDishes);
+
+        return true;
     }
 }

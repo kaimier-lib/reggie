@@ -2,6 +2,7 @@ package cn.kaimier.reggie.controller;
 
 import cn.kaimier.reggie.common.R;
 import cn.kaimier.reggie.dto.DishDto;
+import cn.kaimier.reggie.entity.Dish;
 import cn.kaimier.reggie.service.DishService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class DishController {
     private DishService dishService;
 
     @GetMapping("/page")
-    public R<Page<DishDto>> getDishPage(int page, int pageSize,String name) {
+    public R<Page<DishDto>> getDishPage(int page, int pageSize, String name) {
 
         return R.success(dishService.pageDish(page, pageSize, name));
 
@@ -38,7 +39,7 @@ public class DishController {
     }
 
     @GetMapping("/{id}")
-    public R<DishDto> getDishWithFlavorById(@PathVariable Long id) {
+    public R<DishDto> getDishWithFlavor(@PathVariable Long id) {
         DishDto dishDto = dishService.getDishWithFlavorById(id);
         return R.success(dishDto);
     }
@@ -55,12 +56,18 @@ public class DishController {
 
 
     @DeleteMapping
-    public R<String> deleteDishWishFlavorById(@RequestParam List<Long> ids) {
+    public R<String> deleteDishsWithFlavor(@RequestParam List<Long> ids) {
         boolean deleted = dishService.deleteDishWithFlavorById(ids);
         if (deleted) {
             return R.success("删除菜品成功");
         } else {
             return R.error("删除菜品失败");
         }
+    }
+
+    @GetMapping("/list")
+    public R<List<Dish>> listDishes(@RequestParam Long categoryId) {
+        List<Dish> dishes = dishService.listDishes(categoryId);
+        return R.success(dishes);
     }
 }

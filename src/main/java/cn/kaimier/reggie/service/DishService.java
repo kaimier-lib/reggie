@@ -18,4 +18,6 @@ public interface DishService extends IService<Dish> {
     boolean updateDishWithFlavor(DishDto dishDto);
 
     boolean deleteDishWithFlavorById(List<Long> ids);
+
+    List<Dish> listDishes(Long categoryId);
 }

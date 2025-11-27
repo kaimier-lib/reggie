@@ -146,4 +146,14 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         return true;
     }
+
+    @Override
+    public List<Dish> listDishes(Long categoryId) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dish::getCategoryId, categoryId);
+        queryWrapper.eq(Dish::getStatus, 1); // 只查询起售的菜品
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        return list(queryWrapper);
+    }
 }
