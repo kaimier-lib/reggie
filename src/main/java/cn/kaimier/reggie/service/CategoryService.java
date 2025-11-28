@@ -11,5 +11,5 @@ public interface CategoryService extends IService<Category> {
 
     boolean saveCategory(Category category);
 
-    List<Category> listCategories(Category category);
+    List<Category> listCategories(Integer type);
 }

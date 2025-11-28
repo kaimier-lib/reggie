@@ -45,7 +45,6 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
         pageDto.setRecords(list);
 
-
         return pageDto;
     }
 
@@ -58,8 +57,65 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
         Long setmealId = setmeal.getId();
         List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
+        setmealDishes.forEach(item -> item.setSetmealId(setmealId)
+        );
+        setMealDishService.saveBatch(setmealDishes);
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public SetmealDto getSetmealWithDish(Long id) {
+        // 查询套餐基本信息，并拷贝到SetmealDto
+        SetmealDto setmealDto = new SetmealDto();
+        Setmeal setmeal = getById(id);
+        BeanUtils.copyProperties(setmeal, setmealDto);
+
+        // 查询套餐关联的菜品信息,并设置到SetmealDto
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId, id);
+        List<SetmealDish> setmealDishes = setMealDishService.list(queryWrapper);
+        setmealDto.setSetmealDishes(setmealDishes);
+
+        // 返回套餐DTO对象
+        return setmealDto;
+    }
+
+    @Override
+    public boolean updateSetmealWithDish(SetmealDto setmealDto) {
+        // 更新套餐基本信息
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDto, setmeal, "createTime", "createUser", "updateTime", "updateUser");
+        updateById(setmeal);
+
+        // 删除旧的套餐菜品关联信息
+        Long setmealId = setmealDto.getId();
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId, setmealId);
+        setMealDishService.remove(queryWrapper);
+
+        // 添加新的套餐菜品关联信息
+        List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
         setmealDishes.forEach(item -> item.setSetmealId(setmealId));
         setMealDishService.saveBatch(setmealDishes);
+
+        // 返回更新结果
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteSetmealsWithDish(List<Long> ids) {
+        // 删除套餐基本信息
+        LambdaQueryWrapper<Setmeal> setmealQueryWrapper = new LambdaQueryWrapper<>();
+        setmealQueryWrapper.in(Setmeal::getId, ids);
+        remove(setmealQueryWrapper);
+
+        // 删除套餐关联的菜品信息
+        LambdaQueryWrapper<SetmealDish> setmealDishQueryWrapper = new LambdaQueryWrapper<>();
+        setmealDishQueryWrapper.in(SetmealDish::getSetmealId, ids);
+        setMealDishService.remove(setmealDishQueryWrapper);
 
         return true;
     }

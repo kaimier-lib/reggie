@@ -4,11 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.kaimier.reggie.entity.Category;
-import cn.kaimier.reggie.entity.Dish;
-import cn.kaimier.reggie.entity.Setmeal;
 import cn.kaimier.reggie.mapper.CategoryMapper;
 import cn.kaimier.reggie.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,10 +31,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper,Category>
     }
 
     @Override
-    public List<Category> listCategories(Category category) {
+    public List<Category> listCategories(Integer type) {
 
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(category.getType()!=null, Category::getType, category.getType());
+        queryWrapper.eq(type != null, Category::getType, type);
         queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
 
         return list(queryWrapper);

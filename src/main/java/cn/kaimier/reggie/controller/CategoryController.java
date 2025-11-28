@@ -46,8 +46,8 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
-    public R<List<Category>> listCategories(Category category) {
-        List<Category> categories = categoryService.listCategories(category);
+    public R<List<Category>> listCategories(@RequestParam(required = false) Integer type) {
+        List<Category> categories = categoryService.listCategories(type);
 
         return R.success(categories);
     }
