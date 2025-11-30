@@ -17,13 +17,9 @@ public class SetmealController {
     private SetmealService setmealService;
 
     @GetMapping("/page")
-    public R<Page<SetmealDto>> getSetmealPage(int page, int pageSize, @RequestParam(required = false) String name) {
-        Page<SetmealDto> setmealPage = setmealService.getSetmealPage(page, pageSize, name);
-        if (setmealPage != null) {
-            return R.success(setmealPage);
-        } else {
-            return R.error("获取套餐分页信息失败");
-        }
+    public R<Page<SetmealDto>> pageSetmeals(int page, int pageSize, @RequestParam(required = false) String name) {
+        Page<SetmealDto> setmealPage = setmealService.pageSetmeals(page, pageSize, name);
+        return R.success(setmealPage);
     }
 
     @PostMapping

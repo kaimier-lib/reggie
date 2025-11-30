@@ -34,8 +34,8 @@ public class SecurityConfig {
                                         "/admin/favicon.ico",
                                         "/employee/login",
                                         "/employee/logout",
-                                        "/backend/**",
-                                        "/front/**",
+                                        "/admin/**",
+                                        "/user/**",
                                         "/common/**",
                                         "/user/sendMsg",
                                         "/user/login"

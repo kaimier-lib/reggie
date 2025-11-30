@@ -9,7 +9,7 @@
         <!--不同屏幕尺寸根字体设置-->
         <script src="./../js/base.js"></script>
         <!--element-ui的样式-->
-        <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css" />
+        <link rel="stylesheet" href="../../admin/plugins/element-ui/index.css" />
         <!-- 引入样式  -->
         <link rel="stylesheet" href="../styles/index.css" />
         <!--本页面内容的样式-->
@@ -33,11 +33,11 @@
             </div>
         </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-        <script src="../../backend/plugins/vue/vue.js"></script>
+        <script src="../../admin/plugins/vue/vue.js"></script>
         <!-- 引入组件库 -->
-        <script src="../../backend/plugins/element-ui/index.js"></script>
+        <script src="../../admin/plugins/element-ui/index.js"></script>
         <!-- 引入axios -->
-        <script src="../../backend/plugins/axios/axios.min.js"></script>
+        <script src="../../admin/plugins/axios/axios.min.js"></script>
         <script src="./../js/request.js"></script>
         <script>
         new Vue({
@@ -55,17 +55,17 @@
             methods:{
                 goBack(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/index.html')
+                        window.location.replace('/user/index.html')
                     })   
                 },
                 toOrderPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/page/order.html')
+                        window.location.replace('/user/page/order.html')
                     })  
                 },
                 toMainPage(){
                     window.requestAnimationFrame(()=>{
-                        window.location.replace('/front/index.html')
+                        window.location.replace('/user/index.html')
                     })  
                 },
                 //获取送达时间

@@ -24,7 +24,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
     private final SetmealDishService setMealDishService;
 
     @Override
-    public Page<SetmealDto> getSetmealPage(int page, int pageSize, String name) {
+    public Page<SetmealDto> pageSetmeals(int page, int pageSize, String name) {
 
         Page<SetmealDto> pageDto = new Page<>();
 
