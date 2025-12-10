@@ -63,7 +63,16 @@
                     const regex = /^(13[0-9]{9})|(15[0-9]{9})|(17[0-9]{9})|(18[0-9]{9})|(19[0-9]{9})$/;
                     if (regex.test(this.form.phone)) {
                         this.msgFlag = false
-                        this.form.code = (Math.random()*1000000).toFixed(0)
+                        // this.form.code = (Math.random()*1000000).toFixed(0)
+                        this.$axios.post('/user/sendMsg',{phone:this.form.phone}).then(res=>{
+                            if(res.data.code === 1){
+                                // this.$message.success("验证码发送成功，请查看控制台日志")
+                                this.$notify({ type:'success', message:'验证码发送成功，请注意查收'});
+                            } else {
+                                // this.$message.error(res.data.msg)
+                                this.$notify({ type:'warning', message:res.msg});
+                            }
+                        })
                     }else{
                         this.msgFlag = true
                     }

@@ -71,4 +71,5 @@
     }
   )
   win.$axios = service
+    Vue.prototype.$axios = service
 })(window);
